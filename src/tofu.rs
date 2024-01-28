@@ -8,9 +8,9 @@ pub const MAX_TOFU_COUNT: usize = 20;
 
 pub const TOFU_SPEED: f32 = 400.0;
 
-pub const TOFU_TOP_BOUNDARY: f32 = 4800.0;
-pub const TOFU_LEFT_BOUNDARY: f32 = 0.0;
-pub const TOFU_RIGHT_BOUNDARY: f32 = 6400.0;
+pub const TOFU_TOP_BOUNDARY: f32 = 2400.0;
+pub const TOFU_LEFT_BOUNDARY: f32 = -3200.0;
+pub const TOFU_RIGHT_BOUNDARY: f32 = 3200.0;
 
 use crate::{AppState, Money, Player};
 use rand::{rngs::SmallRng, Rng as _, SeedableRng};
@@ -82,8 +82,8 @@ fn check_collision(
             );
             if collision.is_some() {
                 info!("HIT!");
-                commands.entity(player_entity).despawn();
                 app_state.set(AppState::GameOver);
+                commands.entity(player_entity).despawn();
                 game_over_event.send_default();
                 break;
             }
@@ -161,11 +161,14 @@ fn spawn_tofu(
         Direction::default(),
         SpriteBundle {
             texture,
-            transform: Transform::from_xyz(x, y, 0.),
+            transform: Transform {
+                translation: Vec3::new(x, y, 0.0),
+                ..Default::default()
+            },
             ..default()
         },
         Tofu {
-            lifetime: Timer::from_seconds(10.0, TimerMode::Once),
+            lifetime: Timer::from_seconds(20.0, TimerMode::Once),
         },
     ));
 }
