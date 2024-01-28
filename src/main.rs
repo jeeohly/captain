@@ -1,7 +1,21 @@
-use bevy::{prelude::*, render::camera::ScalingMode};
+use bevy::{
+    app::App,
+    prelude::*,
+    render::camera::ScalingMode,
+    sprite::{collide_aabb::collide, MaterialMesh2dBundle},
+};
+
 use tofu::TofuPlugin;
 
 mod tofu;
+
+#[derive(States, Debug, Hash, PartialEq, Eq, Clone, Default)]
+enum AppState {
+    #[default]
+    GameStart,
+    InGame,
+    GameOver,
+}
 
 #[derive(Component, Reflect)]
 pub struct Health {
@@ -15,7 +29,7 @@ pub struct Player {
     pub health: Health,
 }
 
-#[derive(Resource)]
+#[derive(Resource, Default)]
 pub struct Money(pub f32);
 
 fn character_movement(
@@ -39,7 +53,7 @@ fn character_movement(
     }
 }
 
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+fn setup(mut commands: Commands) {
     let mut camera = Camera2dBundle::default();
 
     camera.projection.scaling_mode = ScalingMode::AutoMin {
@@ -47,7 +61,13 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         min_height: 4800.0,
     };
     commands.spawn(camera);
+}
 
+fn spawn_player(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut app_state: ResMut<NextState<AppState>>,
+) {
     let texture = asset_server.load("captain_face.png");
 
     commands.spawn((
@@ -63,10 +83,12 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             },
         },
     ));
+    app_state.set(AppState::InGame);
 }
 
 fn main() {
     App::new()
+        .add_state::<AppState>()
         .add_plugins(
             DefaultPlugins
                 .set(ImagePlugin::default_nearest())
@@ -81,9 +103,12 @@ fn main() {
                 })
                 .build(),
         )
-        .insert_resource(Money(100.0))
-        .add_plugins(TofuPlugin)
         .add_systems(Startup, setup)
-        .add_systems(Update, character_movement)
+        .add_systems(Update, spawn_player.run_if(in_state(AppState::GameStart)))
+        .add_systems(
+            Update,
+            character_movement.run_if(in_state(AppState::InGame)),
+        )
+        .add_plugins(TofuPlugin)
         .run();
 }
