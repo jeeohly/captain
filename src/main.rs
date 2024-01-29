@@ -67,23 +67,26 @@ fn spawn_player(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut app_state: ResMut<NextState<AppState>>,
+    input: Res<Input<KeyCode>>,
 ) {
-    let texture = asset_server.load("captain_face.png");
+    if input.pressed(KeyCode::Space) {
+        let texture = asset_server.load("captain_face.png");
 
-    commands.spawn((
-        SpriteBundle {
-            texture,
-            ..default()
-        },
-        Player {
-            speed: 500.0,
-            health: Health {
-                max: 10.0,
-                current: 2.0,
+        commands.spawn((
+            SpriteBundle {
+                texture,
+                ..default()
             },
-        },
-    ));
-    app_state.set(AppState::InGame);
+            Player {
+                speed: 500.0,
+                health: Health {
+                    max: 10.0,
+                    current: 2.0,
+                },
+            },
+        ));
+        app_state.set(AppState::InGame);
+    }
 }
 
 fn main() {

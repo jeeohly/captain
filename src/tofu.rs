@@ -102,7 +102,7 @@ fn game_restarter(
     for entity in query.iter_mut() {
         commands.entity(entity).despawn();
     }
-    if keyboard_input.pressed(KeyCode::R) {
+    if keyboard_input.pressed(KeyCode::Space) {
         app_state.set(AppState::GameStart);
         time_since.0 = 0.0;
         money_count.0 = 0.0;
