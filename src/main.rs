@@ -1,5 +1,6 @@
 use bevy::{
     app::App,
+    core_pipeline::clear_color::ClearColorConfig,
     prelude::*,
     render::camera::ScalingMode,
     sprite::{collide_aabb::collide, MaterialMesh2dBundle},
@@ -54,7 +55,12 @@ fn character_movement(
 }
 
 fn setup(mut commands: Commands) {
-    let mut camera = Camera2dBundle::default();
+    let mut camera = Camera2dBundle {
+        camera_2d: Camera2d {
+            clear_color: ClearColorConfig::Custom(Color::rgb(0.8, 0.4, 0.2)),
+        },
+        ..Default::default()
+    };
 
     camera.projection.scaling_mode = ScalingMode::AutoMin {
         min_width: 6400.0,
