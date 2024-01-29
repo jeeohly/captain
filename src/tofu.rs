@@ -76,9 +76,9 @@ fn check_collision(
         for (_, tofu_transform) in tofu_query.iter() {
             let collision = collide(
                 player_transform.translation,
-                player_transform.scale.truncate(),
+                Vec2::new(64.0, 64.0),
                 tofu_transform.translation,
-                tofu_transform.scale.truncate(),
+                Vec2::new(64.0, 64.0),
             );
             if collision.is_some() {
                 info!("HIT!");
