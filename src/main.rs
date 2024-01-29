@@ -88,6 +88,22 @@ fn spawn_player(
         app_state.set(AppState::InGame);
     }
 }
+pub fn start_page(mut commands: Commands) {
+    commands.spawn(
+        TextBundle::from_section(
+            "press space to start\nwasd/arrow_keys to move",
+            TextStyle {
+                ..Default::default()
+            },
+        )
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            top: Val::Percent(50.0),
+            left: Val::Percent(50.0),
+            ..default()
+        }),
+    );
+}
 
 fn main() {
     App::new()
